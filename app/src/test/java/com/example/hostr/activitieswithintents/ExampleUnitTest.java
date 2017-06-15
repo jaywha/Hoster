@@ -1,4 +1,4 @@
-package com.example.uzezi.activitieswithintents;
+package com.example.hostr.activitieswithintents;
 
 import org.junit.Test;
 

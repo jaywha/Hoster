@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.uzezi.activitieswithintents">
+    package="com.example.hostr.activitieswithintents">
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -19,7 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.com.madmen.hostr.activitieswithintents.MainActivity"
             android:label="Hostr"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -29,13 +29,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".createEvent"
+            android:name="com.example.com.madmen.hostr.activitieswithintents.CreateEvent"
             android:label="@string/title_activity_create_event"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName="com.example.com.madmen.hostr.activitieswithintents.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.uzezi.activitieswithintents.MainActivity" />
+                android:value="com.example.com.madmen.hostr.activitieswithintents.MainActivity" />
         </activity>
 
         <meta-data

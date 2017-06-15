@@ -1,4 +1,4 @@
-package com.example.uzezi.activitieswithintents;
+package com.example.com.madmen.hostr.activitieswithintents;
 
 import android.app.FragmentManager;
 import android.content.Intent;
@@ -15,8 +15,82 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.example.uzezi.activitieswithintents.fragment_package.GmapFragment;
+import com.example.com.madmen.hostr.activitieswithintents.CreateEvent;
+import com.example.hostr.activitieswithintents.R;
+import com.example.hostr.activitieswithintents.fragment_package.GmapFragment;
 
+ /*
+ * @startuml
+ * title Hostr App - Class Diagram
+ * class MainActivity {
+ *  -mFab : FloatingActionButton
+ *
+ *  #onCreate(Bundle) : void
+ *  +onBackPressed() : void
+ *  +onCreateOptionsMenu(Menu) : boolean
+ *  +onOptionsItemSelected(MenuItem) : boolean
+ *  +onNavigationItemSelected(MenuItem) : boolean
+ * }
+ *
+ * class CreateEvent {
+ *  -mImageIcon : ImageView
+ *  -mEventImage : ImageView
+ *  -mCancelEventButton : Button
+ *  -mEventTitleTextView : TextView
+ *  -mEventHost : TextView
+ *  -mSetEventName : EditText
+ *  -mImageFromPhotoIcon : ImageView
+ *  -mCreateEventButton : Button
+ *  -mAdapter : EventOptionsAdapter
+ *  -mRecyclerView : RecyclerView
+ *
+ *  #onCreate(Bundle) : void
+ *  {static}+GetData() : List<EventFeaturesData>
+ *  +shareApp(String) : void
+ *  +onClickEventName(View) : void
+ * }
+ *
+ * class EventOptionsAdapter {
+ *  -mNumberOfItems : int
+ *  -listItemClickedListener : OnListItemClickedListener
+ *  -eventOption : List<EventFeaturesData> = Collections.EMPTY_LIST
+ *  --
+ *  ~EventOptionsAdapter(List) : EventOptionsAdapter
+ *  ~onCreateViewHolder(ViewGroup, int) : FeatureViewHolder
+ *  ~onBindViewHolder(FeatureViewHolder, int) : void
+ *  ~getItemCounter() : int
+ * }
+ *
+ * class FeatureViewHolder {
+ *  ~description : TextView
+ *  ~icon : ImageView
+ *
+ *  ~FeatureViewHolder(View) : FeatureViewHolder
+ *  +onClick(View) : void
+ * }
+ *
+ * interface OnListItemClickedListener {
+ *  {abstract} ~OnListItemClicked(int) : void
+ *  --
+ * }
+ *
+ * MainActivity <-- CreateEvent
+ * MainActivity <-- EventOptionsAdapter
+ *
+ * EventOptionsAdapter --|> OnListItemClickedListener
+ * EventOptionsAdapter --> FeatureViewHolder
+ * @enduml
+ */
+
+/**
+ * Encompasses the core activity of the Hostr App.
+ * Manages the fragments for options, settings, event creation, and other features.
+ *
+ * Original Source code from https://github.com/uzikid100/Hoster
+ * @author Jay Whaley
+ * @version alpha:0.0.1
+ * @since 06/14/2017
+ */
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -102,9 +176,8 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.create_event) {
-            final Intent intent = new Intent(this, createEvent.class);
+            final Intent intent = new Intent(this, CreateEvent.class);
             startActivity(intent);
-
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {

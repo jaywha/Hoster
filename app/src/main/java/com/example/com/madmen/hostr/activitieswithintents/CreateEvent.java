@@ -1,41 +1,27 @@
-package com.example.uzezi.activitieswithintents;
+package com.example.com.madmen.hostr.activitieswithintents;
 
 import android.content.Intent;
-import android.media.Image;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ShareCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.Layout;
-import android.text.TextWatcher;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.uzezi.activitieswithintents.NewEvent_Package.EventFeaturesData;
-import com.example.uzezi.activitieswithintents.R;
-import com.google.android.gms.ads.AdView;
+import com.example.hostr.activitieswithintents.NewEvent_Package.EventFeaturesData;
+import com.example.hostr.activitieswithintents.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class createEvent extends AppCompatActivity {
+public class CreateEvent extends AppCompatActivity {
 
     private ImageView mImageIcon;
     private ImageView mEventImage;
