@@ -48,7 +48,7 @@ class EventOptionsAdapter extends RecyclerView.Adapter<EventOptionsAdapter.Featu
     public void onBindViewHolder(FeatureViewHolder holder, int position) {
         EventFeaturesData current = eventOption.get(position);
         holder.description.setText(current.optionTitle);
-        holder.icon.setImageResource(current.icon);
+        //holder.icon.setImageResource(current.icon);
     }
 
     @Override
@@ -66,13 +66,13 @@ class EventOptionsAdapter extends RecyclerView.Adapter<EventOptionsAdapter.Featu
     class FeatureViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         TextView description;
-        ImageView icon;
+        //ImageView icon;
 
         FeatureViewHolder(View itemView) {
             super(itemView);
 
             description = (TextView) itemView.findViewById(R.id.tv_custom_row_description);
-            icon = (ImageView) itemView.findViewById(R.id.iv_custom_row_image);
+            //icon = (ImageView) itemView.findViewById(R.id.iv_custom_row_image);
     }
 
         @Override

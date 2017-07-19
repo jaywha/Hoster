@@ -100,7 +100,6 @@ public class MainActivity extends AppCompatActivity
     Add current location feature with marker and camera
     Simulate creating an event with mandatory fields
     Throw an error/handle mandatory eventFields not set... i.e. (location not set)
-    Finish Preferences with udacity.
      */
 
     private FloatingActionButton mFab;
@@ -113,10 +112,12 @@ public class MainActivity extends AppCompatActivity
 
         final Toast toast = Toast.makeText(this, "Finding Events Near You!", Toast.LENGTH_SHORT);
         mFab = (FloatingActionButton) findViewById(R.id.fab);
+        final Intent hover_intent = new Intent(this, EventGallery.class); // Default to EventGallery with Local Filter ON
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 toast.show();
+                startActivity(hover_intent);
             }
         });
 
@@ -179,15 +180,20 @@ public class MainActivity extends AppCompatActivity
             final Intent intent = new Intent(this, CreateEvent.class);
             startActivity(intent);
         } else if (id == R.id.nav_gallery) {
-
+            final Intent intent = new Intent(this, EventGallery.class);
+            startActivity(intent);
         } else if (id == R.id.nav_slideshow) {
-
+            final Intent intent = new Intent(this, EventSlideshow.class);
+            startActivity(intent);
         } else if (id == R.id.nav_manage) {
-
+            final Intent intent = new Intent(this, ManageProfile.class);
+            startActivity(intent);
         } else if (id == R.id.nav_share) {
-
+            final Intent intent = new Intent(this, ShareEvent.class);
+            startActivity(intent);
         } else if (id == R.id.nav_send) {
-
+            final Intent intent = new Intent(this, SendEvent.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
