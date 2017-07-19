@@ -1,5 +1,6 @@
 package com.example.com.madmen.hostr.activitieswithintents;
 
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
@@ -99,7 +100,7 @@ public class MainActivity extends AppCompatActivity
     Add recyclerView with eventOptions to the contentCreate View
     Add current location feature with marker and camera
     Simulate creating an event with mandatory fields
-    Throw an error/handle mandatory eventFields not set... i.e. (location not set)
+    Throw an error/handle mandatory eventFields not set... i.e. (location not set) bh111111111q
      */
 
     private FloatingActionButton mFab;
@@ -122,7 +123,7 @@ public class MainActivity extends AppCompatActivity
         });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        SmoothActionBarDrawerToggle toggle = new SmoothActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
@@ -176,24 +177,37 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.create_event) {
-            final Intent intent = new Intent(this, CreateEvent.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_gallery) {
-            final Intent intent = new Intent(this, EventGallery.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_slideshow) {
-            final Intent intent = new Intent(this, EventSlideshow.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_manage) {
-            final Intent intent = new Intent(this, ManageProfile.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_share) {
-            final Intent intent = new Intent(this, ShareEvent.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_send) {
-            final Intent intent = new Intent(this, SendEvent.class);
-            startActivity(intent);
+        switch (id) {
+            case R.id.create_event: {
+                final Intent intent = new Intent(this, CreateEvent.class);
+                startActivity(intent);
+                break;
+            }
+            case R.id.nav_gallery: {
+                final Intent intent = new Intent(this, EventGallery.class);
+                startActivity(intent);
+                break;
+            }
+            case R.id.nav_slideshow: {
+                final Intent intent = new Intent(this, EventSlideshow.class);
+                startActivity(intent);
+                break;
+            }
+            case R.id.nav_manage: {
+                final Intent intent = new Intent(this, ManageProfile.class);
+                startActivity(intent);
+                break;
+            }
+            case R.id.nav_share: {
+                final Intent intent = new Intent(this, ShareEvent.class);
+                startActivity(intent);
+                break;
+            }
+            case R.id.nav_send: {
+                final Intent intent = new Intent(this, SendEvent.class);
+                startActivity(intent);
+                break;
+            }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -201,5 +215,40 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+
+    /**
+     * Code from https://stackoverflow.com/a/29193661
+     */
+    private class SmoothActionBarDrawerToggle extends ActionBarDrawerToggle {
+
+        private Runnable runnable;
+
+        SmoothActionBarDrawerToggle(Activity activity, DrawerLayout drawerLayout, Toolbar toolbar, int openDrawerContentDescRes, int closeDrawerContentDescRes) {
+            super(activity, drawerLayout, toolbar, openDrawerContentDescRes, closeDrawerContentDescRes);
+        }
+
+        @Override
+        public void onDrawerOpened(View drawerView) {
+            super.onDrawerOpened(drawerView);
+            invalidateOptionsMenu();
+        }
+        @Override
+        public void onDrawerClosed(View view) {
+            super.onDrawerClosed(view);
+            invalidateOptionsMenu();
+        }
+        @Override
+        public void onDrawerStateChanged(int newState) {
+            super.onDrawerStateChanged(newState);
+            if (runnable != null && newState == DrawerLayout.STATE_IDLE) {
+                runnable.run();
+                runnable = null;
+            }
+        }
+
+        public void runWhenIdle(Runnable runnable) {
+            this.runnable = runnable;
+        }
+    }
 
 }

@@ -1,8 +1,21 @@
 package com.example.com.madmen.hostr.activitieswithintents;
 
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
+
 /**
- * Created by Nini on 7/19/2017.
+ * Another class in ${PACKAGE}
+ * Created by Jay Whaley on 7/19/2017.
  */
 
-class EventGallery {
+public class EventGallery extends AppCompatActivity {
+    private EventGalleryAdapter mGalleryAdapter;
+
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Toast.makeText(getBaseContext(), "Work in Progress", Toast.LENGTH_LONG).show();
+        finish();
+    }
 }
