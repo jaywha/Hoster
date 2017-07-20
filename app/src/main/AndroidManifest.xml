@@ -37,7 +37,16 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.com.madmen.hostr.activitieswithintents.MainActivity" />
         </activity>
-
+        <activity android:name="com.example.com.madmen.hostr.activitieswithintents.EventGallery"
+            android:label="@string/title_activity_event_gallery"
+            android:parentActivityName="com.example.com.madmen.hostr.activitieswithintents.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.com.madmen.hostr.activitieswithintents.MainActivity"
+                />
+        </activity>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCret26PJIGuCmIdc8gLfe41RcKzuKhLA4"/>

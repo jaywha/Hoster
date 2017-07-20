@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/iv_custom_row_image"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:padding="8dp"
         android:src="@drawable/hostr_icon" />
 
@@ -18,11 +18,12 @@
         android:layout_width="200dp"
         android:layout_height="68dp"
         android:padding="8dp"
-        android:text="Default Text Here"
+        android:text="@string/hello_blank_fragment"
         android:textSize="16sp"
         android:textColor="@color/black"
         android:gravity="bottom"
-        android:layout_marginLeft="6dp"/>
+        android:layout_marginLeft="6dp"
+        android:layout_marginStart="6dp"/>
 
 
     <CheckBox
