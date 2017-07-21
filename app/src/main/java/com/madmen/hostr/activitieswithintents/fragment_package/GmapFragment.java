@@ -1,4 +1,4 @@
-package com.example.hostr.activitieswithintents.fragment_package;
+package com.madmen.hostr.activitieswithintents.fragment_package;
 
 import android.annotation.TargetApi;
 import android.app.Fragment;
@@ -11,7 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.hostr.activitieswithintents.R;
+import com.madmen.hostr.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;

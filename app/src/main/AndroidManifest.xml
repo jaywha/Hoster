@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.hostr.activitieswithintents">
+    package="com.madmen.hostr">
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -19,7 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.example.com.madmen.hostr.activitieswithintents.MainActivity"
+            android:name="com.madmen.hostr.MainActivity"
             android:label="Hostr"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -29,22 +29,22 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.com.madmen.hostr.activitieswithintents.CreateEvent"
+            android:name="com.madmen.hostr.data_models.Event"
             android:label="@string/title_activity_create_event"
-            android:parentActivityName="com.example.com.madmen.hostr.activitieswithintents.MainActivity"
+            android:parentActivityName="com.madmen.hostr.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.com.madmen.hostr.activitieswithintents.MainActivity" />
+                android:value="com.madmen.hostr.MainActivity" />
         </activity>
-        <activity android:name="com.example.com.madmen.hostr.activitieswithintents.EventGallery"
+        <activity android:name="com.madmen.hostr.EventGallery"
             android:label="@string/title_activity_event_gallery"
-            android:parentActivityName="com.example.com.madmen.hostr.activitieswithintents.MainActivity"
+            android:parentActivityName="com.madmen.hostr.MainActivity"
             android:theme="@style/AppTheme.NoActionBar"
             >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.com.madmen.hostr.activitieswithintents.MainActivity"
+                android:value="com.madmen.hostr.MainActivity"
                 />
         </activity>
         <meta-data

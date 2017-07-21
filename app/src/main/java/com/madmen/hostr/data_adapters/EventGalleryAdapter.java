@@ -1,9 +1,7 @@
-package com.example.com.madmen.hostr.activitieswithintents;
+package com.madmen.hostr.data_adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
-
-import com.example.hostr.activitieswithintents.NewEvent_Package.EventFeaturesData;
 
 import java.util.Collections;
 import java.util.List;
@@ -13,7 +11,7 @@ import java.util.List;
  * Created by Jay Whaley on 7/19/2017.
  */
 
-class EventGalleryAdapter extends RecyclerView.Adapter<EventOptionsAdapter.FeatureViewHolder> {
+public class EventGalleryAdapter extends RecyclerView.Adapter<EventOptionsAdapter.FeatureViewHolder> {
     private int mNumberOfEvents;
     private EventOptionsAdapter.OnListItemClickedListener listItemClickedListener;
     private List eventOption = Collections.EMPTY_LIST;

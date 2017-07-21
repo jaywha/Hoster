@@ -1,4 +1,4 @@
-package com.example.com.madmen.hostr.activitieswithintents;
+package com.madmen.hostr;
 
 import android.app.Activity;
 import android.app.FragmentManager;
@@ -16,9 +16,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.example.com.madmen.hostr.activitieswithintents.CreateEvent;
-import com.example.hostr.activitieswithintents.R;
-import com.example.hostr.activitieswithintents.fragment_package.GmapFragment;
+import com.firebase.ui.FirebaseUI;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.storage.FirebaseStorage;
+import com.madmen.hostr.activitieswithintents.fragment_package.GmapFragment;
+import com.madmen.hostr.data_models.Event;
 
  /*
  * @startuml
@@ -95,15 +99,12 @@ import com.example.hostr.activitieswithintents.fragment_package.GmapFragment;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    /*
-    TODO
-    Add recyclerView with eventOptions to the contentCreate View
-    Add current location feature with marker and camera
-    Simulate creating an event with mandatory fields
-    Throw an error/handle mandatory eventFields not set... i.e. (location not set) bh111111111q
-     */
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseRemoteConfig mFirebaseRemoteConfig;
+    private FirebaseStorage mFirebaseStorage;
+    private FirebaseDatabase mFirebaseDatabase;
+    private FirebaseUI mFirebaseUI;
 
-    private FloatingActionButton mFab;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,7 +113,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         final Toast toast = Toast.makeText(this, "Finding Events Near You!", Toast.LENGTH_SHORT);
-        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton mFab = (FloatingActionButton) findViewById(R.id.fab);
         final Intent hover_intent = new Intent(this, EventGallery.class); // Default to EventGallery with Local Filter ON
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -179,7 +180,7 @@ public class MainActivity extends AppCompatActivity
 
         switch (id) {
             case R.id.create_event: {
-                final Intent intent = new Intent(this, CreateEvent.class);
+                final Intent intent = new Intent(this, Event.class);
                 startActivity(intent);
                 break;
             }

@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "367477698655",
+    "firebase_url": "https://hostrdev.firebaseio.com",
+    "project_id": "hostrdev",
+    "storage_bucket": "hostrdev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:367477698655:android:154d4ed731a327e6",
+        "android_client_info": {
+          "package_name": "com.madmen.hostr"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "367477698655-cdbajji1ocb5olibtkhjqd0v20lrnibg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.madmen.hostr",
+            "certificate_hash": "0de2c6031937ff14f0a8af095e9b9460c47d5033"
+          }
+        },
+        {
+          "client_id": "367477698655-u0s7qo15vnvr5e5l95vdfocv6h9ldvh2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVoiG7KxXKJNAo-tRoD5HL9DC5Fmm_pHc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "367477698655-88ihi7bvoojtvavl5b26v3nrjf6akork.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.hostr.Hostr"
+              }
+            },
+            {
+              "client_id": "367477698655-u0s7qo15vnvr5e5l95vdfocv6h9ldvh2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,7 +1,6 @@
-package com.example.com.madmen.hostr.activitieswithintents;
+package com.madmen.hostr.data_adapters;
 
 import android.content.Context;
-import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.hostr.activitieswithintents.NewEvent_Package.EventFeaturesData;
-import com.example.hostr.activitieswithintents.R;
+import com.madmen.hostr.activitieswithintents.NewEvent_Package.EventFeaturesData;
+import com.madmen.hostr.R;
 
 import java.util.Collections;
 import java.util.List;
@@ -19,7 +18,7 @@ import java.util.List;
  * Created by com.madmen.hostr on 6/11/2017.
  */
 
-class EventOptionsAdapter extends RecyclerView.Adapter<EventOptionsAdapter.FeatureViewHolder> {
+public class EventOptionsAdapter extends RecyclerView.Adapter<EventOptionsAdapter.FeatureViewHolder> {
 
     private int mNumberOfItems;
     private OnListItemClickedListener listItemClickedListener;
@@ -30,7 +29,7 @@ class EventOptionsAdapter extends RecyclerView.Adapter<EventOptionsAdapter.Featu
     }
 
 
-    EventOptionsAdapter(List data){
+    public EventOptionsAdapter(List data){
         eventOption = data;
     }
 
@@ -47,8 +46,8 @@ class EventOptionsAdapter extends RecyclerView.Adapter<EventOptionsAdapter.Featu
     @Override
     public void onBindViewHolder(FeatureViewHolder holder, int position) {
         EventFeaturesData current = eventOption.get(position);
-        holder.description.setText(current.optionTitle);
-        holder.icon.setImageResource(current.icon);
+        holder.description.setText(current.getTitle());
+        holder.icon.setImageResource(current.getIcon());
     }
 
     @Override

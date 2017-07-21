@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="title_activity_event_gallery">Search Events</string>
+    <string name="iv_event_image">Event Image Button</string>
+    <string name="iv_right_chevron">Right Chevron</string>
 </resources>
