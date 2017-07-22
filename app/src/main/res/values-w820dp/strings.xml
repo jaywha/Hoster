@@ -3,4 +3,5 @@
     <string name="title_activity_event_gallery">Search Events</string>
     <string name="iv_event_image">Event Image Button</string>
     <string name="iv_right_chevron">Right Chevron</string>
+    <string name="sign_out">Sign Out</string>
 </resources>

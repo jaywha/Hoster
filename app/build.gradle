@@ -3,6 +3,7 @@ apply plugin: 'com.android.application'
 allprojects {
     repositories {
         jcenter()
+        mavenCentral()
         maven {
             url "https://maven.google.com"
         }
@@ -59,6 +60,7 @@ dependencies {
     //FirebaseUI
     compile 'com.firebaseui:firebase-ui:2.1.0'
 
+    compile 'com.facebook.android:facebook-android-sdk:[4,5)'
 
     testCompile 'junit:junit:4.12'
 }

@@ -125,7 +125,6 @@ public class Event extends AppCompatActivity {
         fabFinish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EventGallery.message = debugName;
                 finish();
             }
         });

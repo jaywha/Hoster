@@ -27,10 +27,11 @@
         For more information, see https://support.google.com/admob/answer/3052638
     <!- -->
     <string name="interstitial_ad_unit_id">ca-app-pub-3940256099942544/1033173712</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_event_gallery">Search Events</string>
     <string name="iv_event_image">Event Image Button</string>
     <string name="iv_right_chevron">Right Chevron</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="facebook_application_id" translatable="false">1344588582303339</string>
+    <string name="facebook_login_protocol_scheme" translatable="false">fb1344588582303339</string>
 </resources>
