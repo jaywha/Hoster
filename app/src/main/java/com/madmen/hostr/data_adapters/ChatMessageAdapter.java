@@ -54,7 +54,7 @@ public class ChatMessageAdapter extends ArrayAdapter<ChatMessage> {
                 photoImageView.setVisibility(View.GONE);
                 messageTextView.setText(message.getText());
             }
-        authorTextView.setText(message.getName());
+        authorTextView.setText(message.getDisplay_name());
         } catch (NullPointerException npe) {
             Log.d(TAG, "NullPointer from message");
         }

@@ -22,8 +22,6 @@ class Profile {
     private String gender = "";
     private int phone_num = 0;
 
-    // TODO Credit Card information?
-
     // Management
     private Profile[] friend_list;
 

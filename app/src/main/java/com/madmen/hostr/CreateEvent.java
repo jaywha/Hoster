@@ -2,6 +2,7 @@ package com.madmen.hostr;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ShareCompat;
@@ -15,6 +16,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.madmen.hostr.data_models.Event;
 import com.madmen.hostr.data_adapters.EventOptionsAdapter;
 
@@ -22,6 +28,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CreateEvent extends AppCompatActivity {
+
+    private FirebaseDatabase mFirebaseDatabase;
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseStorage mFirebaseStorage;
+
+    private DatabaseReference mProfileReference;
+    private StorageReference mEventImageReference;
 
     private ImageView mImageIcon;
     private ImageView mEventImage;
@@ -41,6 +54,13 @@ public class CreateEvent extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
+
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mFirebaseStorage = FirebaseStorage.getInstance();
+
+        mProfileReference = mFirebaseDatabase.getReference().child("profiles");
+        mEventImageReference = mFirebaseStorage.getReference().child("event_images");
 
         mEventTitleTextView = (TextView) findViewById(R.id.tv_eventName);
         mEventHost = (TextView) findViewById(R.id.event_host);

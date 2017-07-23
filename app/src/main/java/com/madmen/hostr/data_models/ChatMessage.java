@@ -1,6 +1,8 @@
 package com.madmen.hostr.data_models;
 
-import android.widget.ArrayAdapter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Another class in ${PACKAGE}
@@ -15,6 +17,12 @@ public class ChatMessage {
     private String photo_url;
 
     public ChatMessage() {}
+    public ChatMessage(String message, String username, String image_url) {
+        this.text = message;
+        this.display_name = username;
+        this.photo_url = (image_url == null || image_url.isEmpty() ? "" : image_url);
+        this.timestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US).format(new Date());
+    }
 
     public String getText() {
         return this.text;
@@ -22,11 +30,11 @@ public class ChatMessage {
 
     public void setText(String txt) { this.text = txt; }
 
-    public String getName() {
+    public String getDisplay_name() {
         return this.display_name;
     }
 
-    public void setName(String name) { this.display_name = name; }
+    public void setDisplay_name(String display_name) { this.display_name = display_name; }
 
     public String getSender_id() {
         return this.sender_id;
