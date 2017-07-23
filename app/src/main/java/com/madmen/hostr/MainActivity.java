@@ -1,12 +1,17 @@
 package com.madmen.hostr;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,25 +21,30 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.ui.FirebaseUI;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.ResultCodes;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.storage.FirebaseStorage;
-import com.madmen.hostr.activitieswithintents.fragment_package.GmapFragment;
-import com.madmen.hostr.data_models.Event;
+import com.google.firebase.storage.StorageReference;
+import com.madmen.hostr.fragments.GmapFragment;
+import com.madmen.hostr.data_adapters.ChatMessageAdapter;
+import com.madmen.hostr.data_models.ChatMessage;
 
-import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
-
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
  /*
  * @startuml
@@ -62,7 +72,7 @@ import java.util.Arrays;
  *  -mRecyclerView : RecyclerView
  *
  *  #onCreate(Bundle) : void
- *  {static}+GetData() : List<EventFeaturesData>
+ *  {static}+GetData() : List<Event>
  *  +shareApp(String) : void
  *  +onClickEventName(View) : void
  * }
@@ -70,7 +80,7 @@ import java.util.Arrays;
  * class EventOptionsAdapter {
  *  -mNumberOfItems : int
  *  -listItemClickedListener : OnListItemClickedListener
- *  -eventOption : List<EventFeaturesData> = Collections.EMPTY_LIST
+ *  -eventOption : List<Event> = Collections.EMPTY_LIST
  *  --
  *  ~EventOptionsAdapter(List) : EventOptionsAdapter
  *  ~onCreateViewHolder(ViewGroup, int) : FeatureViewHolder
@@ -113,7 +123,17 @@ public class MainActivity extends AppCompatActivity
 
     private static final int RC_SIGN_IN = 1;
     private static final String TAG = "Hostr.MainActivity";
+
     private FirebaseAuth mFirebaseAuth;
+    private FirebaseDatabase mFirebaseDatabase;
+    private FirebaseStorage mFirebaseStorage;
+
+    private DatabaseReference mMessagesDatabaseReference;
+    private StorageReference mChatPhotosStorageReference;
+
+    private ChatMessageAdapter mMessageAdapter;
+
+    private ChildEventListener mChildEventListener;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
 
     @Override
@@ -123,7 +143,15 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        List<ChatMessage> chatMessages = new ArrayList<>();
+        mMessageAdapter = new ChatMessageAdapter(this, R.layout.item_message, chatMessages);
+
         mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mFirebaseStorage = FirebaseStorage.getInstance();
+
+        mMessagesDatabaseReference = mFirebaseDatabase.getReference().child("messages");
+        mChatPhotosStorageReference = mFirebaseStorage.getReference().child("chat_photos");
 
         final Toast toast = Toast.makeText(this, "Finding Events Near You!", Toast.LENGTH_SHORT);
         FloatingActionButton mFab = (FloatingActionButton) findViewById(R.id.fab);
@@ -184,12 +212,14 @@ public class MainActivity extends AppCompatActivity
 
             // Successfully signed in
             if (resultCode == ResultCodes.OK) {
-                finish();
+                FirebaseUser currentUser = mFirebaseAuth.getCurrentUser();
+                onSignedInInitialize(currentUser.getEmail());
             } else {
                 // Sign in failed
                 if (response == null) {
                     // User pressed back button
                     onBackPressed();
+                    finish();
                 }
                 try {
                     int err_lvl = response.getErrorCode();
@@ -207,14 +237,17 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void onSignedInInitialize(String username) {
+    private void onSignedInInitialize(String email) {
         //do Initial User Setup
-        Toast.makeText(this, "Welcome to Hostr, "+username+"!", Toast.LENGTH_LONG).show();
+        TextView user_email_text = (TextView) findViewById(R.id.user_email);
+        user_email_text.setText(email);
+        attachDatabaseReadListener();
     }
 
     private void onSingedOutCleanup() {
         //do Sign-Out and prepare app for Sign-In
         Toast.makeText(this, "Signing Out of Hostr...", Toast.LENGTH_LONG).show();
+        detachDatabaseReadListener();
     }
     
     @Override
@@ -269,6 +302,8 @@ public class MainActivity extends AppCompatActivity
                 return true;
             case R.id.action_sign_out:
                 mFirebaseAuth.signOut();
+                onSingedOutCleanup();
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -279,13 +314,13 @@ public class MainActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         switch (id) {
             case R.id.create_event: {
-                final Intent intent = new Intent(this, Event.class);
+                final Intent intent = new Intent(this, CreateEvent.class);
                 startActivity(intent);
                 break;
             }
@@ -310,8 +345,8 @@ public class MainActivity extends AppCompatActivity
                 break;
             }
             case R.id.nav_send: {
-                final Intent intent = new Intent(this, SendEvent.class);
-                startActivity(intent);
+                DialogFragment chatFragment = new ChatMessageDialogFragment();
+                chatFragment.show(getFragmentManager(), "messageDialog");
                 break;
             }
         }
@@ -321,7 +356,94 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    private void attachDatabaseReadListener() {
+        if (mChildEventListener == null) {
+            mChildEventListener = new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
+                    mMessageAdapter.add(chatMessage);
+                }
 
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                }
+
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                }
+
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                }
+
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            };
+            mMessagesDatabaseReference.addChildEventListener(mChildEventListener);
+        }
+    }
+
+    private void detachDatabaseReadListener() {
+        if(mChildEventListener != null) {
+            mMessagesDatabaseReference.removeEventListener(mChildEventListener);
+            mChildEventListener = null;
+        }
+    }
+
+    public static class ChatMessageDialogFragment extends DialogFragment {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            List<ChatMessage> chatMessages = new ArrayList<>();
+            final ChatMessageAdapter mMessageAdapter = new ChatMessageAdapter(getActivity(), R.id.messageListViewDialog, chatMessages);
+            FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
+            DatabaseReference mChatMessages = mFirebaseDatabase.getReference().child("8_messages");
+            ChildEventListener mChildEventListener = new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
+                    mMessageAdapter.add(chatMessage);
+                }
+
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            };
+            mChatMessages.addChildEventListener(mChildEventListener);
+
+            View dialog_view = inflater.inflate(R.layout.message_dialog_layout, null);
+            ListView mChatList = (ListView) dialog_view.findViewById(R.id.messageListViewDialog);
+
+            mChatList.setAdapter(mMessageAdapter);
+
+            builder.setView(dialog_view);
+
+            builder.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+
+            return builder.create();
+        }
+    }
     /**
      * Code from https://stackoverflow.com/a/29193661
      */

@@ -13,6 +13,7 @@
     android:elevation="40dp">
 
     <ImageView
+        android:contentDescription="@string/hostr_logo_description"
         android:id="@+id/imageView"
         android:layout_width="100dp"
         android:layout_height="0dp"
@@ -25,13 +26,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="Welcome To Hostr"
+        android:text="@string/welcome_string"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/user_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="uzeziogodo@gmail.com" />
+        android:text="@string/user_email" />
 
 </LinearLayout>

@@ -34,4 +34,10 @@
     <string name="sign_out">Sign Out</string>
     <string name="facebook_application_id" translatable="false">1344588582303339</string>
     <string name="facebook_login_protocol_scheme" translatable="false">fb1344588582303339</string>
+    <string name="welcome_string">Welcome To Hostr</string>
+    <string name="hostr_logo_description">Hostr Logo</string>
+    <string name="user_email">uzeziogodo@gmail.com</string>
+    <string name="activity_event_slideshow_title">Event Slideshow</string>
+    <string name="activity_manage_profile_title">Profile</string>
+    <string name="activity_share_event_title">Share a Hostr Event</string>
 </resources>

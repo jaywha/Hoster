@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.madmen.hostr.activitieswithintents.NewEvent_Package.EventFeaturesData;
+import com.madmen.hostr.data_models.Event;
 import com.madmen.hostr.R;
 
 import java.util.Collections;
@@ -22,7 +22,7 @@ public class EventOptionsAdapter extends RecyclerView.Adapter<EventOptionsAdapte
 
     private int mNumberOfItems;
     private OnListItemClickedListener listItemClickedListener;
-    private List<EventFeaturesData> eventOption = Collections.EMPTY_LIST;
+    private List<Event> eventOption = Collections.EMPTY_LIST;
 
     interface OnListItemClickedListener{
         void OnListItemClicked(int position);
@@ -45,7 +45,7 @@ public class EventOptionsAdapter extends RecyclerView.Adapter<EventOptionsAdapte
 
     @Override
     public void onBindViewHolder(FeatureViewHolder holder, int position) {
-        EventFeaturesData current = eventOption.get(position);
+        Event current = eventOption.get(position);
         holder.description.setText(current.getTitle());
         holder.icon.setImageResource(current.getIcon());
     }
@@ -79,7 +79,7 @@ public class EventOptionsAdapter extends RecyclerView.Adapter<EventOptionsAdapte
         }
     }
 //
-//    class EventFeaturesData {
+//    class Event {
 //        int icon;
 //        String optionTitle;
 //    }

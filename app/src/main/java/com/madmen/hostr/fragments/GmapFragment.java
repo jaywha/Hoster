@@ -1,4 +1,4 @@
-package com.madmen.hostr.activitieswithintents.fragment_package;
+package com.madmen.hostr.fragments;
 
 import android.annotation.TargetApi;
 import android.app.Fragment;
