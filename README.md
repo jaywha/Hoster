@@ -12,7 +12,7 @@ The following class diagram shows the configuration for the _original_ codebase.
 For a TODO-List:<br/>
 - [ ] Events<br/>
   - [x] Event Creation --> Needs to save information to create an event.<br/>
-  - [ ] Event Search --> See Event Gallery<br/>
+  - [x] Event Search --> See Event Gallery<br/>
   - [ ] Event Management --> Attend, delete, edit, and etcetera to events.<br/>
 - [ ] Profiles<br/>
   - [ ] Profile Creation --> Sign-up using Google and Facebook or just with Hostr.<br/>

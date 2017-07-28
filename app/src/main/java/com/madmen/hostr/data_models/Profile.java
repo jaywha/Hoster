@@ -9,7 +9,7 @@ import java.util.Date;
  * Created by Jay Whaley on 7/19/2017.
  */
 
-class Profile {
+public class Profile {
     // Public Information
     private String username = "";
     private String fullname = "";

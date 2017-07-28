@@ -14,14 +14,15 @@ public class ChatMessage {
     private String sender_id;
     private String text;
     private String timestamp;
-    private String photo_url;
+    //private String photo_url; for chat_photos
 
     public ChatMessage() {}
-    public ChatMessage(String message, String username, String image_url) {
+    public ChatMessage(String message, String username, String sender_id) {
         this.text = message;
         this.display_name = username;
-        this.photo_url = (image_url == null || image_url.isEmpty() ? "" : image_url);
-        this.timestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US).format(new Date());
+        //this.photo_url = (image_url == null || image_url.isEmpty() ? "" : image_url);
+        this.timestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US).format(new Date());
+        this.sender_id = sender_id;
     }
 
     public String getText() {
@@ -44,11 +45,11 @@ public class ChatMessage {
         this.sender_id = sender;
     }
 
-    public String getPhoto_url() {
+    /*public String getPhoto_url() {
         return this.photo_url;
-    }
+    }*/
 
-    public void setPhoto_url(String url) { this.photo_url = url; }
+    //public void setPhoto_url(String url) { this.photo_url = url; }
 
     public String getTimestamp() {
         return this.timestamp;

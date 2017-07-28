@@ -19,7 +19,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:background="@color/hostrYellow"
+        android:background="@color/colorPrimary"
         android:elevation="16dp">
 
 
@@ -37,7 +37,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:background="@color/hostrYellow"
+                android:background="@color/colorPrimary"
                 android:fadingEdgeLength="@dimen/activity_horizontal_margin"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark">
             </ImageView>
@@ -116,13 +116,14 @@
                 android:textColor="@android:color/black" />
 
             <TextView
+                android:id="@+id/iv_percent_complete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/tv_createEventTitle"
                 android:layout_alignParentRight="true"
                 android:text="75%"
                 android:textColor="@color/midGray"
-                android:textSize="18sp"
-                android:layout_alignBottom="@+id/tv_createEventTitle" />
+                android:textSize="18sp" />
         </RelativeLayout>
 
     </FrameLayout>

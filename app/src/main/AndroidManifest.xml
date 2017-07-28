@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
@@ -63,16 +64,6 @@
                 android:value="com.madmen.hostr.MainActivity"
                 />
         </activity>
-        <activity android:name="com.madmen.hostr.EventSlideshow"
-            android:label="@string/activity_event_slideshow_title"
-            android:parentActivityName="com.madmen.hostr.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.madmen.hostr.MainActivity"
-                />
-        </activity>
         <activity android:name="com.madmen.hostr.ManageProfile"
             android:label="@string/activity_manage_profile_title"
             android:parentActivityName="com.madmen.hostr.MainActivity"
@@ -83,14 +74,13 @@
                 android:value="com.madmen.hostr.MainActivity"
                 />
         </activity>
-        <activity android:name="com.madmen.hostr.ShareEvent"
-            android:label="@string/activity_share_event_title"
-            android:parentActivityName="com.madmen.hostr.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            >
+        <activity android:name=".EventView"
+            android:label="EventViewer"
+            android:parentActivityName="com.madmen.hostr.EventGallery"
+            android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.madmen.hostr.MainActivity"
+                android:value="com.madmen.hostr.EventGallery"
                 />
         </activity>
         <meta-data
@@ -100,7 +90,6 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
     </application>
 
 </manifest>

@@ -3,15 +3,13 @@ package com.madmen.hostr;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
-import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.ShareCompat;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -29,15 +27,11 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.ResultCodes;
+import com.google.android.gms.internal.kx;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+import com.google.firebase.auth.UserInfo;
 import com.madmen.hostr.fragments.ChatMessageDialogFragment;
 import com.madmen.hostr.fragments.GmapFragment;
 import com.madmen.hostr.data_adapters.ChatMessageAdapter;
@@ -123,21 +117,24 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final int RC_SIGN_IN = 1;
-    private int mNotificationId = 101;
     private static final String TAG = "Hostr.MainActivity";
 
     private FirebaseAuth mFirebaseAuth;
-    private FirebaseDatabase mFirebaseDatabase;
-    private FirebaseStorage mFirebaseStorage;
-
-    private DatabaseReference mMessagesDatabaseReference;
-    private StorageReference mChatPhotosStorageReference;
 
     private ChatMessageAdapter mMessageAdapter;
 
-    private ChildEventListener mChildEventListener;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
 
+    /**
+     * This onCreate method encompasses all that is the starting point of the Hostr app.
+     * This method will create an AuthState Listener for signing in using various providers.
+     * This method will create an app drawer to navigate the sea of events and the profiles that host them.
+     * Also houses a global chat that only the developers have access to currently.
+     *
+     * @param savedInstanceState - Android Default onCreate Parameter for Activity State Restoration
+     * @see com.madmen.hostr.data_models.Event
+     * @see com.madmen.hostr.data_models.Profile
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -149,13 +146,11 @@ public class MainActivity extends AppCompatActivity
         mMessageAdapter = new ChatMessageAdapter(this, R.layout.item_message, chatMessages);
 
         mFirebaseAuth = FirebaseAuth.getInstance();
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mFirebaseStorage = FirebaseStorage.getInstance();
 
-        mMessagesDatabaseReference = mFirebaseDatabase.getReference().child("9_messages");
-        mChatPhotosStorageReference = mFirebaseStorage.getReference().child("chat_photos");
+        FirebaseUser currentUser = mFirebaseAuth.getCurrentUser();
 
-        final Toast toast = Toast.makeText(this, "Finding Events Near You!", Toast.LENGTH_SHORT);
+        final Toast toast = Toast.makeText(this, (currentUser == null ? "9_user" : currentUser.getUid())
+                +" | "+(currentUser != null ? currentUser.getProviderId() : "Provider_ID"), Toast.LENGTH_SHORT);
         FloatingActionButton mFab = (FloatingActionButton) findViewById(R.id.fab);
         final Intent hover_intent = new Intent(this, EventGallery.class); // Default to EventGallery with Local Filter ON
         mFab.setOnClickListener(new View.OnClickListener() {
@@ -182,17 +177,21 @@ public class MainActivity extends AppCompatActivity
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
+                FirebaseUser currentUser = mFirebaseAuth.getCurrentUser();
+                if (currentUser != null) {
                     //user is signed in
-                    onSignedInInitialize(user.getDisplayName());
+                    onSignedInInitialize(currentUser.getEmail());
                 } else {
-                    onSingedOutCleanup();
                     //user is signed out
                     startActivityForResult(
                             AuthUI.getInstance()
                                     .createSignInIntentBuilder()
                                     .setIsSmartLockEnabled(false)
+                                    .setTheme(R.style.AppTheme)
+                                    .setLogo(R.drawable.hostr_icon)
+                                    /* TODO Add terms and privacy policies to AuthUI
+                                    .setTosUrl("TOS_URL")
+                                    .setPrivacyPolicyUrl("PRIVACY_URL")*/
                                     .setAvailableProviders(
                                             Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),
                                                     new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build(),
@@ -206,6 +205,14 @@ public class MainActivity extends AppCompatActivity
         };
     }
 
+    /**
+     * Catches activity results from startActivityForResult requests.
+     * Specifically used for Firebase Auth UI Sign-in.
+     *
+     * @param requestCode - The integer code used to start an Activity for a result.
+     * @param resultCode - The resultant status code; usually OK or not.
+     * @param data - The actual data returned from the called Activity.
+     */
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // RC_SIGN_IN is the request code you passed into startActivityForResult(...) when starting the sign in flow.
@@ -215,65 +222,45 @@ public class MainActivity extends AppCompatActivity
             // Successfully signed in
             if (resultCode == ResultCodes.OK) {
                 FirebaseUser currentUser = mFirebaseAuth.getCurrentUser();
-                onSignedInInitialize(currentUser.getEmail());
+                if (currentUser != null) {
+                    onSignedInInitialize(currentUser.getEmail());
+                    Log.d(TAG, "Current User ID: "+currentUser.getUid() );
+                }
             } else {
                 // Sign in failed
                 if (response == null) {
                     // User pressed back button
                     onBackPressed();
-                    finish();
-                }
-                try {
+                } else {
                     int err_lvl = response.getErrorCode();
                     if (response.getErrorCode() == ErrorCodes.NO_NETWORK) {
-                        Log.d(TAG, "Sign-in response got a no network error code --> ERR_"+err_lvl);
+                        Log.d(TAG, "Sign-in response got a no network error code --> ERR_" + err_lvl);
                     }
                     if (response.getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
-                        Log.d(TAG, "Sign-in response got an unknown error code --> ERR_"+err_lvl);
+                        Log.d(TAG, "Sign-in response got an unknown error code --> ERR_" + err_lvl);
                     }
-                } catch (NullPointerException npe) {
-                    Log.d(TAG, "Sign-in response was null: "+npe.getLocalizedMessage());
-                    finish();
                 }
             }
         }
     }
 
+    /**
+     * This method should be beefed up to accommodate other Sing-In actions.
+     *
+     * @param email - The currentUser's email address pulled from Firebase.
+     */
     private void onSignedInInitialize(String email) {
         //do Initial User Setup
         TextView user_email_text = (TextView) findViewById(R.id.user_email);
-        user_email_text.setText(email);
-        attachDatabaseReadListener();
-    }
-
-    private void onSingedOutCleanup() {
-        //do Sign-Out and prepare app for Sign-In
-        Toast.makeText(this, "Signing Out of Hostr...", Toast.LENGTH_LONG).show();
-        detachDatabaseReadListener();
-    }
-    
-    @Override
-    protected void onStart() {
-        super.onStart();
-        //Check for sign-in
-        FirebaseUser currentUser = mFirebaseAuth.getCurrentUser();
-        if (currentUser == null) {
-            startActivityForResult(
-                    AuthUI.getInstance()
-                            .createSignInIntentBuilder()
-                            .setIsSmartLockEnabled(false)
-                            .setAvailableProviders(
-                                    Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),
-                                            new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build(),
-                                            new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build()
-                                    )
-                            )
-                            .build(),
-                    RC_SIGN_IN);
+        if(user_email_text != null) {
+            user_email_text.setText(email);
         }
-        //updateUI accordingly
     }
 
+    /**
+     * Handles when the user presses the Back button.
+     * Especially useful for the DrawerLayout.
+     */
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -284,6 +271,13 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * This is the hamburger (or 3 dots at the top right) menu.
+     * For now, only inflates with a Sign-Out and Settings option.
+     *
+     * @param menu - The actual hamburger menu item itself
+     * @return boolean value which states if the menu was successfully created.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -291,6 +285,13 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    /**
+     * This is the hamburger menu's switch case method.
+     * Any options added need to have some sort of action here
+     *
+     * @param item - The item the user chose from the hamburger menu.
+     * @return boolean value which states if the menu item successfully ran
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -301,10 +302,11 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         switch (id) {
             case R.id.action_settings:
+                // TODO link to com.madmen.hostr.SettingsManagement
                 return true;
             case R.id.action_sign_out:
                 mFirebaseAuth.signOut();
-                onSingedOutCleanup();
+                Toast.makeText(this, "Signing Out of Hostr...", Toast.LENGTH_LONG).show();
                 finish();
                 return true;
             default:
@@ -312,8 +314,13 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
-
+    /**
+     * This is the switch case method for selecting drawer items.
+     * Any new items made in R.layout.content
+     *
+     * @param item - The drawer item selected
+     * @return boolean value for successful completion of the selcted drawer item
+     */
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -331,19 +338,19 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             }
-            case R.id.nav_slideshow: {
-                final Intent intent = new Intent(this, EventSlideshow.class);
-                startActivity(intent);
-                break;
-            }
             case R.id.nav_manage: {
                 final Intent intent = new Intent(this, ManageProfile.class);
                 startActivity(intent);
                 break;
             }
             case R.id.nav_share: {
-                final Intent intent = new Intent(this, ShareEvent.class);
-                startActivity(intent);
+                String linkToDownloadApp = "Check out events now on Hostr!\nhttps//:hostr.com/download";
+
+                ShareCompat.IntentBuilder.from(this)
+                        .setType("text/plain")
+                        .setText(linkToDownloadApp)
+                        .setChooserTitle("Share Hostr with your friends!")
+                        .startChooser();
                 break;
             }
             case R.id.nav_send: {
@@ -358,83 +365,60 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private void attachDatabaseReadListener() {
-        if (mChildEventListener == null) {
-            mChildEventListener = new ChildEventListener() {
-                @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    FirebaseUser currentUser = mFirebaseAuth.getCurrentUser();
-                    ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
-                    mMessageAdapter.add(chatMessage);
-                    boolean notify_condition = false;
-                    try {
-                        notify_condition = (chatMessage != null && !chatMessage.getDisplay_name().isEmpty()) &&
-                                (currentUser != null) &&
-                                (currentUser.getDisplayName() != null) && (currentUser.getDisplayName().isEmpty()) &&
-                                !(chatMessage.getDisplay_name().equals(currentUser.getDisplayName()));
-                    } catch (NullPointerException npe) {
-                        Log.d(TAG, "Notification creation error"+npe.getLocalizedMessage());
-                    }
-
-                    if(notify_condition) {
-                        NotificationCompat.Builder mBuilder =
-                                new NotificationCompat.Builder(getBaseContext())
-                                        .setSmallIcon(R.drawable.hostr_icon)
-                                        .setContentTitle("New Message")
-                                        .setContentText(chatMessage.getText());
-                        // Creates an explicit intent for an Activity in your app
-                        Intent resultIntent = new Intent(getBaseContext(), MainActivity.class);
-
-                        // The stack builder object will contain an artificial back stack for the
-                        // started Activity.
-                        // This ensures that navigating backward from the Activity leads out of
-                        // your application to the Home screen.
-                        TaskStackBuilder stackBuilder = TaskStackBuilder.create(getBaseContext());
-                        // Adds the back stack for the Intent (but not the Intent itself)
-                        stackBuilder.addParentStack(MainActivity.class);
-                        // Adds the Intent that starts the Activity to the top of the stack
-                        stackBuilder.addNextIntent(resultIntent);
-                        PendingIntent resultPendingIntent =
-                                stackBuilder.getPendingIntent(
-                                        0,
-                                        PendingIntent.FLAG_UPDATE_CURRENT
-                                );
-                        mBuilder.setContentIntent(resultPendingIntent);
-                        NotificationManager mNotificationManager =
-                                (NotificationManager) getBaseContext().getSystemService(Context.NOTIFICATION_SERVICE);
-
-                        // mNotificationId is a unique integer your app uses to identify the
-                        // notification. For example, to cancel the notification, you can pass its ID
-                        // number to NotificationManager.cancel().
-                        mNotificationManager.notify(mNotificationId, mBuilder.build());
-                    }
-                }
-
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                }
-
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-                }
-
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                }
-
-                public void onCancelled(DatabaseError databaseError) {
-                }
-            };
-            mMessagesDatabaseReference.addChildEventListener(mChildEventListener);
+    /**
+     * When paused, the app should remove its AuthStateListener to avoid eating resources.
+     */
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mAuthStateListener != null) {
+            mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
         }
+        mMessageAdapter.clear();
     }
 
-    private void detachDatabaseReadListener() {
-        if(mChildEventListener != null) {
-            mMessagesDatabaseReference.removeEventListener(mChildEventListener);
-            mChildEventListener = null;
-        }
+    /**
+     * When resumed, the app needs to re-add the AuthStateListener to ensure users are signed in.
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+    }
+
+    /**
+     * On first starting, the app will force the user to log in.
+     * TODO: Ensure that only 1 Login screen appears.
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mFirebaseAuth.getCurrentUser();
+        if(currentUser == null) {
+            startActivityForResult(
+                    AuthUI.getInstance()
+                            .createSignInIntentBuilder()
+                            .setIsSmartLockEnabled(false)
+                            .setTheme(R.style.AppTheme)
+                            .setLogo(R.drawable.hostr_icon)
+                                    /* TODO Add terms and privacy policies to AuthUI
+                                    .setTosUrl("TOS_URL")
+                                    .setPrivacyPolicyUrl("PRIVACY_URL")*/
+                            .setAvailableProviders(
+                                    Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),
+                                            new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build(),
+                                            new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build()
+                                    )
+                            )
+                            .build(),
+                    RC_SIGN_IN);
+        } // else skip to main layout
     }
 
     /**
      * Code from https://stackoverflow.com/a/29193661
+     * TODO: Remove when DrawerToggle can operate smoothly (ie, lower res drawables)
      */
     private class SmoothActionBarDrawerToggle extends ActionBarDrawerToggle {
 

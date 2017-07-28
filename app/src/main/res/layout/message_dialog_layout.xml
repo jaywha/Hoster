@@ -23,13 +23,13 @@
             android:layout_width="275dp"
             android:layout_height="match_parent"
             android:contentDescription="@string/text_message_hint"
-            android:gravity="end"
+            android:gravity="start"
             android:inputType="text" />
 
         <Button
             android:id="@+id/send_message_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:text="@string/send_message_button_text" />
     </LinearLayout>
 
